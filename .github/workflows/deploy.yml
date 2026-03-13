@@ -9,29 +9,36 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: "us-east-1" # Double-check this matches your AMI
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Updated to v4 for Node 24 support
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3  # Updated to v3 for Node 24 support
+        uses: hashicorp/setup-terraform@v3
         with:
-          terraform_wrapper: false # Often prevents "Exit Code 1" bugs in GitHub
+          terraform_wrapper: false
 
       - name: Terraform Init
-        # We add 'working-directory' so it finds your infra folder
         run: terraform init
-        working-directory: ./infra 
+        working-directory: ./infra
+        # We put the ENV directly inside the steps to be 100% sure they are seen
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-1" 
 
       - name: Terraform Plan
         run: terraform plan
         working-directory: ./infra
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-1"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./infra
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-1"
