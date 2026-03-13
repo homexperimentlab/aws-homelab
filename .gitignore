@@ -1,0 +1,17 @@
+# Terraform (Matches these anywhere in the project)
+.terraform/
+.terraform.*
+*.tfstate
+*.tfstate.backup
+*.hcl
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
