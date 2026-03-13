@@ -8,24 +8,30 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-
+    
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: "us-east-1" # Or whatever region you are using
+      AWS_REGION: "us-east-1" # Double-check this matches your AMI
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to v4 for Node 24 support
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3  # Updated to v3 for Node 24 support
+        with:
+          terraform_wrapper: false # Often prevents "Exit Code 1" bugs in GitHub
 
       - name: Terraform Init
+        # We add 'working-directory' so it finds your infra folder
         run: terraform init
+        working-directory: ./infra 
 
       - name: Terraform Plan
         run: terraform plan
+        working-directory: ./infra
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+        working-directory: ./infra
